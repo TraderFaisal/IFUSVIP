@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading VIP Community - Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #06090e;
+            --card-bg: rgba(255,255,255,0.03);
+            --border-color: rgba(255,255,255,0.08);
+            --primary-gradient: linear-gradient(135deg, #a03cff, #5122e0, #00d2ff);
+            --premium-gradient: linear-gradient(90deg, #ffcc33, #ffb347);
+            --button-gradient: linear-gradient(90deg, #ff00cc, #3333ff);
+            --text-white: #ffffff;
+            --text-gray: #a0a4ab;
+            --accent-glow: 0 0 15px rgba(160,60,255,0.5);
+            --gold-glow: 0 0 10px rgba(255,204,51,0.6);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Hind Siliguri', 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            cursor: pointer; /* ✅ যেকোনো জায়গায় click করা যাবে */
+            position: relative;
+        }
+
+        /* ════════════════════════════════════════
+           ✅ 2. TRADING ANIMATED BACKGROUND
+        ════════════════════════════════════════ */
+        #tradingBg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* Flash overlay for lightning */
+        #flashOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(200,225,255,0.08);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 9998;
+            transition: opacity 0.04s;
+        }
+
+        /* ════════════════════════════════════════
+           ✅ 1. ELECTRIC BORDER WRAPPER
+        ════════════════════════════════════════ */
+        .electric-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            z-index: 1;
+        }
+
+        /* SVG lightning canvas — sits around the card */
+        #lightningCanvas {
+            position: absolute;
+            inset: -20px;
+            width: calc(100% + 40px);
+            height: calc(100% + 40px);
+            pointer-events: none;
+            z-index: 10;
+            overflow: visible;
+        }
+
+        /* ════════════════════════════════════════
+           ORIGINAL CONTAINER STYLES
+        ════════════════════════════════════════ */
+        .container {
+            width: 100%;
+            background: rgba(10,14,20,0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), var(--accent-glow);
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .container:hover { transform: translateY(-5px); }
+
+        .header {
+            background: var(--primary-gradient);
+            padding: 40px 25px;
+            position: relative;
+            border-bottom: 4px solid #ffcc33;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 100%; height: 4px;
+            background: #ffcc33;
+            box-shadow: var(--gold-glow);
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .btn-loss-free {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            color: rgba(255,255,255,0.9);
+            padding: 9px 18px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-block;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-premium {
+            background: linear-gradient(90deg, #ff8c00, #ff0080);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 35px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(255,0,128,0.5);
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .vip-access-tag {
+            background: var(--premium-gradient);
+            color: #000;
+            font-weight: 700;
+            display: inline-block;
+            padding: 3px 20px;
+            border-radius: 15px;
+            margin-top: -15px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            z-index: 10;
+            box-shadow: var(--gold-glow);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 25px 20px;
+            gap: 15px;
+        }
+        .stat-item h3 {
+            color: #ffcc33;
+            margin: 5px 0;
+            font-weight: 700;
+            font-size: 20px;
+            filter: drop-shadow(var(--gold-glow));
+        }
+        .stat-item p { font-size: 12px; color: var(--text-gray); margin: 0; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            padding: 20px;
+        }
+        .feature-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+        .feature-box:hover {
+            border-color: rgba(255,204,51,0.35);
+            box-shadow: 0 0 20px rgba(255,204,51,0.2);
+            transform: translateY(-4px);
+        }
+        .feature-box i {
+            color: #ffcc33;
+            font-size: 26px;
+            margin-bottom: 12px;
+            filter: drop-shadow(var(--gold-glow));
+        }
+        .feature-box h4 { margin: 5px 0 8px 0; font-size: 15px; font-weight: 600; }
+        .feature-box p  { font-size: 11px; color: var(--text-gray); line-height: 1.4; }
+
+        .telegram-section {
+            padding: 25px;
+            background: rgba(0,0,0,0.4);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .join-now-btn {
+            background: var(--button-gradient);
+            padding: 16px 25px;
+            border-radius: 35px;
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 19px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 25px rgba(51,51,255,0.5);
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+        .join-now-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(51,51,255,0.7);
+        }
+        .join-now-btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+        .join-now-btn:hover::after { left: 100%; }
+
+        .pips-profit {
+            font-size: 13px;
+            color: #00ffcc;
+            font-weight: 600;
+            margin: 5px 0;
+            text-shadow: 0 0 8px rgba(0,255,204,0.5);
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: #444;
+            padding: 15px 20px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Flash overlay -->
+<div id="flashOverlay"></div>
+
+<!-- ✅ Trading Animated Background -->
+<canvas id="tradingBg"></canvas>
+
+<!-- ✅ Electric Border + Card -->
+<div class="electric-wrapper" id="wrapper">
+    <svg id="lightningCanvas" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <div class="container">
+        <div class="header">
+            <h1>📊 আপনি কি ট্রেডিং এ সফল হতে চান?</h1>
+            <a href="https://t.me/addlist/1CR5fmGGJ3A0ODNh" class="btn-loss-free" target="_blank">📉 ট্রেডিং লস থেকে মুক্তি চান?</a>
+            <div>
+                <a href="https://t.me/addlist/1CR5fmGGJ3A0ODNh" class="btn-premium" target="_blank">
+                    <i class="fa-solid fa-crown"></i> JOIN OUR VIP <i class="fa-solid fa-crown"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="vip-access-tag">✨ VIP ACCESS ✨</div>
+
+        <div class="stats-grid">
+            <div class="stat-item"><h3>15,327+</h3><p>সক্রিয় ট্রেডার</p></div>
+            <div class="stat-item"><h3>92%</h3><p>সফলতা রেট</p></div>
+            <div class="stat-item"><h3>২৪/৭</h3><p>সিগন্যাল সাপোর্ট</p></div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-box"><i class="fas fa-chart-line"></i><h4>প্রো সিগন্যাল</h4><p>৯৫% এক্যুরেসি প্রিমিয়াম এন্ট্রি</p></div>
+            <div class="feature-box"><i class="fas fa-users"></i><h4>লিডারবোর্ড</h4><p>টপ ট্রেডারদের ফলো করুন</p></div>
+            <div class="feature-box"><i class="far fa-clock"></i><h4>লাইভ আপডেট</h4><p>ব্রেকিং নিউজ ও সেটআপ</p></div>
+            <div class="feature-box"><i class="fas fa-gem"></i><h4>ভিআইপি</h4><p>এক্সক্লুসিভ কন্টেন্ট</p></div>
+        </div>
+
+        <div class="telegram-section">
+            <h2 style="font-size:20px;margin-bottom:20px;">🚀 টেলিগ্রাম VIP গ্রুপে আজই জয়েন করুন</h2>
+            <a href="https://t.me/addlist/1CR5fmGGJ3A0ODNh" class="join-now-btn" target="_blank">
+                <i class="fab fa-telegram-plane"></i> এখনই জয়েন করুন &rarr;
+            </a>
+            <p class="pips-profit">✅ প্রতিদিন ৯৫% প্রফিট শেয়ার</p>
+            <p style="font-size:13px;color:var(--text-gray);margin:5px 0;">👥 ১৯,৭৩৭+ ট্রেডাররা ইতিমধ্যে আত্মবিশ্বাসী</p>
+        </div>
+
+        <div class="footer-text">⚡️ ট্রেডিং ঝুঁকি সম্পর্কে সতর্ক থাকুন। শুধু শিক্ষামূলক ও সিগন্যাল কমিউনিটি।</div>
+    </div>
+</div>
+
+<script>
+const LINK = 'https://t.me/addlist/1CR5fmGGJ3A0ODNh';
+
+/* ══════════════════════════════════════════════
+   ✅ 3. CLICK ANYWHERE → OPEN LINK
+══════════════════════════════════════════════ */
+document.body.addEventListener('click', function(e) {
+    // Don't double-fire if clicking an actual <a> tag
+    if (e.target.closest('a')) return;
+    window.open(LINK, '_blank');
+});
+
+/* ══════════════════════════════════════════════
+   ✅ 2. TRADING ANIMATED BACKGROUND
+   — Scrolling candlestick chart + price line
+══════════════════════════════════════════════ */
+(function() {
+    const canvas = document.getElementById('tradingBg');
+    const ctx    = canvas.getContext('2d');
+
+    function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Generate price data (random walk)
+    const totalCandles = 80;
+    const candles = [];
+    let price = 0.5;
+
+    for (let i = 0; i < totalCandles; i++) {
+        const open  = price;
+        const move  = (Math.random() - 0.48) * 0.06;
+        price = Math.max(0.1, Math.min(0.9, price + move));
+        const close = price;
+        const high  = Math.max(open, close) + Math.random() * 0.025;
+        const low   = Math.min(open, close) - Math.random() * 0.025;
+        candles.push({ open, close, high, low });
+    }
+
+    // Scrolling price line points
+    const linePoints = [];
+    for (let i = 0; i < totalCandles; i++) {
+        linePoints.push((candles[i].open + candles[i].close) / 2);
+    }
+
+    let scrollX = 0;
+    let animFrame = 0;
+
+    function drawBg() {
+        const W = canvas.width;
+        const H = canvas.height;
+
+        // Dark base
+        ctx.fillStyle = '#06090e';
+        ctx.fillRect(0, 0, W, H);
+
+        // Soft radial glows
+        const g1 = ctx.createRadialGradient(W*0.15, H*0.15, 0, W*0.15, H*0.15, W*0.4);
+        g1.addColorStop(0, 'rgba(160,60,255,0.09)');
+        g1.addColorStop(1, 'transparent');
+        ctx.fillStyle = g1;
+        ctx.fillRect(0, 0, W, H);
+
+        const g2 = ctx.createRadialGradient(W*0.85, H*0.85, 0, W*0.85, H*0.85, W*0.4);
+        g2.addColorStop(0, 'rgba(0,210,255,0.08)');
+        g2.addColorStop(1, 'transparent');
+        ctx.fillStyle = g2;
+        ctx.fillRect(0, 0, W, H);
+
+        // Grid lines
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+        ctx.lineWidth = 1;
+        const gridStep = 50;
+        for (let x = 0; x < W; x += gridStep) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+        }
+        for (let y = 0; y < H; y += gridStep) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        }
+
+        // Candle settings
+        const candleW  = 14;
+        const candleGap = 8;
+        const totalW   = (candleW + candleGap) * totalCandles;
+        const chartTop    = H * 0.15;
+        const chartBottom = H * 0.80;
+        const chartH      = chartBottom - chartTop;
+
+        const offsetX = scrollX % totalW;
+
+        // Draw candles (draw twice for seamless scroll)
+        for (let rep = -1; rep <= 1; rep++) {
+            for (let i = 0; i < totalCandles; i++) {
+                const c = candles[i];
+                const x = rep * totalW + i * (candleW + candleGap) - offsetX + W * 0.05;
+                if (x + candleW < 0 || x > W) continue;
+
+                const oY = chartBottom - c.open  * chartH;
+                const cY = chartBottom - c.close * chartH;
+                const hY = chartBottom - c.high  * chartH;
+                const lY = chartBottom - c.low   * chartH;
+
+                const bull = c.close >= c.open;
+                const color     = bull ? 'rgba(0,220,130,0.7)' : 'rgba(255,70,90,0.7)';
+                const colorDim  = bull ? 'rgba(0,220,130,0.2)' : 'rgba(255,70,90,0.2)';
+
+                // Wick
+                ctx.strokeStyle = color;
+                ctx.lineWidth   = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(x + candleW/2, hY);
+                ctx.lineTo(x + candleW/2, lY);
+                ctx.stroke();
+
+                // Body
+                const bodyTop = Math.min(oY, cY);
+                const bodyH   = Math.max(Math.abs(cY - oY), 2);
+                ctx.fillStyle = color;
+                ctx.fillRect(x, bodyTop, candleW, bodyH);
+
+                // Glow behind body
+                ctx.fillStyle = colorDim;
+                ctx.fillRect(x - 2, bodyTop - 2, candleW + 4, bodyH + 4);
+            }
+        }
+
+        // Smooth price line (green trend line)
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(0,255,180,0.55)';
+        ctx.lineWidth   = 2;
+        ctx.shadowColor = 'rgba(0,255,180,0.4)';
+        ctx.shadowBlur  = 10;
+
+        for (let rep = -1; rep <= 1; rep++) {
+            for (let i = 0; i < linePoints.length; i++) {
+                const x = rep * totalW + i * (candleW + candleGap) + candleW/2 - offsetX + W * 0.05;
+                const y = chartBottom - linePoints[i] * chartH;
+                if (i === 0 && rep === -1) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Floating % labels
+        const labels = ['+2.4%', '+0.8%', '-1.2%', '+3.1%', '+0.5%'];
+        ctx.font = 'bold 12px Poppins, sans-serif';
+        labels.forEach((lbl, i) => {
+            const lx = (W / labels.length) * i + W / (labels.length * 2);
+            const ly = H * 0.88 + Math.sin(animFrame * 0.02 + i) * 6;
+            ctx.fillStyle = lbl.startsWith('+') ? 'rgba(0,220,130,0.5)' : 'rgba(255,70,90,0.5)';
+            ctx.fillText(lbl, lx, ly);
+        });
+
+        // Scroll
+        scrollX += 0.5;
+        animFrame++;
+        requestAnimationFrame(drawBg);
+    }
+    drawBg();
+})();
+
+/* ══════════════════════════════════════════════
+   ✅ 1. ELECTRIC LIGHTNING BORDER
+══════════════════════════════════════════════ */
+(function() {
+    const svg   = document.getElementById('lightningCanvas');
+    const flash = document.getElementById('flashOverlay');
+
+    // Fractal lightning bolt generator
+    function buildBolt(x1, y1, x2, y2, roughness, depth) {
+        if (depth === 0) return [[x1,y1],[x2,y2]];
+        const mx = (x1+x2)/2 + (Math.random()-0.5)*roughness;
+        const my = (y1+y2)/2 + (Math.random()-0.5)*roughness;
+        const L  = buildBolt(x1,y1,mx,my,roughness*0.58,depth-1);
+        const R  = buildBolt(mx,my,x2,y2,roughness*0.58,depth-1);
+        return [...L.slice(0,-1),...R];
+    }
+
+    function pts(points) {
+        return points.map(p => p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+    }
+
+    function addPolyline(points, stroke, width, opacity, blur) {
+        const pl = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+        pl.setAttribute('points', pts(points));
+        pl.setAttribute('stroke', stroke);
+        pl.setAttribute('stroke-width', String(width));
+        pl.setAttribute('fill', 'none');
+        pl.setAttribute('stroke-linecap', 'round');
+        pl.setAttribute('stroke-linejoin', 'round');
+        pl.setAttribute('opacity', String(opacity));
+        if (blur) pl.style.filter = `blur(${blur}px)`;
+        svg.appendChild(pl);
+        return pl;
+    }
+
+    function fadeOut(elements, duration) {
+        let op    = 1;
+        const step = 1 / (duration / 30);
+        const timer = setInterval(() => {
+            op -= step;
+            if (op <= 0) {
+                clearInterval(timer);
+                elements.forEach(el => { try { svg.removeChild(el); } catch(e){} });
+            } else {
+                elements.forEach(el => el.setAttribute('opacity', Math.max(0,parseFloat(el.getAttribute('opacity'))-step).toFixed(2)));
+            }
+        }, 30);
+    }
+
+    function getSize() {
+        const el = document.getElementById('lightningCanvas');
+        return { w: el.clientWidth, h: el.clientHeight };
+    }
+
+    // Short border strike
+    function drawStrike() {
+        const { w, h } = getSize();
+        const pad = 20;
+        const edge = Math.floor(Math.random()*4);
+        let x1,y1,x2,y2;
+
+        switch(edge){
+            case 0: x1=pad+Math.random()*(w-2*pad); y1=pad;   x2=x1+(Math.random()-0.5)*100; y2=pad;   break;
+            case 1: x1=w-pad; y1=pad+Math.random()*(h-2*pad); x2=w-pad; y2=y1+(Math.random()-0.5)*100; break;
+            case 2: x1=pad+Math.random()*(w-2*pad); y1=h-pad; x2=x1+(Math.random()-0.5)*100; y2=h-pad; break;
+            case 3: x1=pad; y1=pad+Math.random()*(h-2*pad);   x2=pad;   y2=y1+(Math.random()-0.5)*100; break;
+        }
+
+        const bolt = buildBolt(x1,y1,x2,y2,22,6);
+        const col  = ['#ffffff','#c8d8ff','#aaddff','#ffffcc'][Math.floor(Math.random()*4)];
+
+        const els = [
+            addPolyline(bolt, col,    8, 0.18, 5),
+            addPolyline(bolt, col,  2.5, 0.65, 0),
+            addPolyline(bolt,'#fff',  1, 1.0,  0),
+        ];
+
+        flash.style.opacity = '1';
+        setTimeout(()=>{ flash.style.opacity='0'; }, 55);
+        fadeOut(els, 350);
+
+        // Double strike
+        if (Math.random() < 0.38) setTimeout(drawStrike, 70+Math.random()*80);
+    }
+
+    // Long bolt across card edge to edge
+    function drawLongBolt() {
+        const { w, h } = getSize();
+        const pad = 20;
+        function edgePt(e){
+            switch(e){
+                case 0: return [pad+Math.random()*(w-2*pad), pad];
+                case 1: return [w-pad, pad+Math.random()*(h-2*pad)];
+                case 2: return [pad+Math.random()*(w-2*pad), h-pad];
+                case 3: return [pad, pad+Math.random()*(h-2*pad)];
+            }
+        }
+        const e1 = Math.floor(Math.random()*4);
+        const e2 = (e1+1+Math.floor(Math.random()*2))%4;
+        const [x1,y1] = edgePt(e1);
+        const [x2,y2] = edgePt(e2);
+        const bolt = buildBolt(x1,y1,x2,y2,45,7);
+        const col  = Math.random()<0.5 ? '#c8d8ff' : '#ffe066';
+
+        const els = [
+            addPolyline(bolt, col,  12, 0.15, 7),
+            addPolyline(bolt, col, 2.5, 0.70, 0),
+            addPolyline(bolt,'#fff', 1.2, 0.9, 0),
+        ];
+
+        flash.style.opacity = '0.9';
+        setTimeout(()=>{ flash.style.opacity='0'; }, 75);
+        fadeOut(els, 400);
+    }
+
+    function scheduleBolt() {
+        drawStrike();
+        setTimeout(scheduleBolt, 450 + Math.random()*2200);
+    }
+    function scheduleLong() {
+        drawLongBolt();
+        setTimeout(scheduleLong, 3200 + Math.random()*4500);
+    }
+
+    setTimeout(scheduleBolt, 700);
+    setTimeout(scheduleLong, 2000);
+})();
+</script>
+</body>
+</html>
